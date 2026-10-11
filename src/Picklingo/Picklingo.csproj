@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Picklingo</RootNamespace>
+    <AssemblyName>Picklingo</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <Authors>Edison-q</Authors>
+    <Description>A lightweight Windows select-to-translate tool: select text anywhere, press the hotkey, read the translation next to your cursor.</Description>
+    <RepositoryUrl>https://github.com/Edison-q/Picklingo-Translate.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <!-- WFO0003：WinForms 分析器建议用 ApplicationHighDpiMode 配置 DPI，但本项目 DPI 由 WPF + manifest（PerMonitorV2）管理，
+         此警告不适用；WinForms 这里只用于托盘图标 -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF 与 WinForms 存在同名类型（Application/Clipboard/DataObject 等）会造成歧义；
+         本项目只在托盘处需要 WinForms，让它“按文件显式引用”而不是全局引入 -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+</Project>
