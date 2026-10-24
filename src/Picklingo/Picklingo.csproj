@@ -10,7 +10,7 @@
     <RootNamespace>Picklingo</RootNamespace>
     <AssemblyName>Picklingo</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Edison-q</Authors>
     <Description>A lightweight Windows select-to-translate tool: select text anywhere, press the hotkey, read the translation next to your cursor.</Description>
     <RepositoryUrl>https://github.com/Edison-q/Picklingo-Translate.git</RepositoryUrl>
