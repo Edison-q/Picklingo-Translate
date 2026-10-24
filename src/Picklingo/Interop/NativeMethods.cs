@@ -294,7 +294,9 @@ internal static class NativeMethods
     public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
     public const int WH_MOUSE_LL = 14;
+    public const int WM_MOUSEMOVE = 0x0200;
     public const int WM_LBUTTONDOWN = 0x0201;
+    public const int WM_LBUTTONUP = 0x0202;
     public const int WM_RBUTTONDOWN = 0x0204;
     public const int WM_MBUTTONDOWN = 0x0207;
 
@@ -319,4 +321,35 @@ internal static class NativeMethods
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     public static extern IntPtr GetModuleHandle(string? lpModuleName);
+
+    // ==================== 系统度量 / 光标 ====================
+
+    public const int SM_CXSIZEFRAME = 32;
+    public const int SM_CXPADDEDBORDER = 92;
+
+    public const int IDC_ARROW = 32512;
+    public const int IDC_SIZENWSE = 32642;
+    public const int IDC_SIZENESW = 32643;
+    public const int IDC_SIZEWE = 32644;
+    public const int IDC_SIZENS = 32645;
+    public const int IDC_SIZEALL = 32646;
+
+    [DllImport("user32.dll")]
+    public static extern int GetSystemMetrics(int nIndex);
+
+    /// <summary>按指定 DPI 取系统度量（PerMonitorV2 下必须用这个，GetSystemMetrics 不跟随每屏 DPI）。</summary>
+    [DllImport("user32.dll")]
+    public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr LoadCursor(IntPtr hInstance, IntPtr lpCursorName);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SetCursor(IntPtr hCursor);
+
+    /// <summary>立即设置系统光标（WPF 的 Cursor 属性要等下一次鼠标移动才生效，太慢）。</summary>
+    public static void SetSystemCursor(int idc)
+    {
+        SetCursor(LoadCursor(IntPtr.Zero, (IntPtr)idc));
+    }
 }

@@ -46,11 +46,38 @@ internal static class Translator
         }
     }
 
-    /// <summary>语言方向：含汉字 → 中译英；否则 → 译中（英文为主）。</summary>
+    /// <summary>
+    /// 语言方向：按“主体语言”判断——汉字数与英文单词数比较，中文为主译英、英文为主译中。
+    /// 修复：旧规则“只要含一个汉字就译英”，导致一大段英文里夹个中文词时被误判成中文段落。
+    /// </summary>
     public static (string From, string To) DetectDirection(string text)
     {
-        bool hasChinese = text.Any(ch => ch >= '\u4E00' && ch <= '\u9FFF');
-        return hasChinese ? ("zh-Hans", "en") : ("en", "zh-Hans");
+        int hanzi = 0;
+        int latinWords = 0;
+        bool inWord = false;
+        foreach (var ch in text)
+        {
+            if (ch >= '\u4E00' && ch <= '\u9FFF')
+            {
+                hanzi++;
+                inWord = false;
+            }
+            else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))
+            {
+                if (!inWord)
+                {
+                    latinWords++;
+                    inWord = true;
+                }
+            }
+            else
+            {
+                inWord = false;
+            }
+        }
+
+        bool chineseDominant = hanzi > 0 && hanzi >= latinWords;
+        return chineseDominant ? ("zh-Hans", "en") : ("en", "zh-Hans");
     }
 
     // ---------------- Bing ----------------

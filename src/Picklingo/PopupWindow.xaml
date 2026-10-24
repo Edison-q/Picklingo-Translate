@@ -13,8 +13,52 @@
         UseLayoutRounding="True"
         FontFamily="Segoe UI, Microsoft YaHei UI">
 
+    <Window.Resources>
+        <!-- 细窄浮动滚动条：不带箭头、不占视觉重量，跟卡片风格一致 -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb MinHeight="26">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <!-- 轨道宽度由系统给（17 DIP），这里只画一根细的药丸，其余透明 -->
+                                                <Border x:Name="thumbBorder"
+                                                        Width="6"
+                                                        HorizontalAlignment="Center"
+                                                        Background="#C9CED5"
+                                                        CornerRadius="3"
+                                                        Margin="0,3,0,3"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="thumbBorder" Property="Background" Value="#9AA1AB"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="14">
-        <Border Background="#FFFFFF"
+        <Border x:Name="CardBorder" Background="#FFFFFF"
                 CornerRadius="10"
                 BorderBrush="#E1E4E8"
                 BorderThickness="1"
@@ -23,9 +67,16 @@
                 <DropShadowEffect BlurRadius="16" ShadowDepth="2" Opacity="0.22" Direction="270" Color="#000000"/>
             </Border.Effect>
 
-            <StackPanel MinWidth="220" MaxWidth="400">
+            <Grid x:Name="ContentGrid" MinWidth="220" MaxWidth="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <!-- 原文（灰色小字，方便对照；超长可滚动） -->
-                <ScrollViewer MaxHeight="54" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer x:Name="SourceScroll" Grid.Row="0" MaxHeight="54" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              PreviewMouseWheel="OnPreviewMouseWheel">
                     <TextBlock x:Name="SourceText"
                                FontSize="12"
                                Foreground="#8B929A"
@@ -33,10 +84,11 @@
                 </ScrollViewer>
 
                 <!-- 分隔线 -->
-                <Border Height="1" Background="#EFF1F3" Margin="0,9,0,9"/>
+                <Border Grid.Row="1" Height="1" Background="#EFF1F3" Margin="0,9,0,9"/>
 
                 <!-- 译文（大字；超长可滚动） -->
-                <ScrollViewer MaxHeight="280" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer x:Name="ResultScroll" Grid.Row="2" MaxHeight="340" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              PreviewMouseWheel="OnPreviewMouseWheel">
                     <TextBlock x:Name="ResultText"
                                FontSize="15"
                                Foreground="#1F2329"
@@ -45,7 +97,7 @@
                 </ScrollViewer>
 
                 <!-- 底部：状态 + 复制按钮 -->
-                <Grid Margin="0,10,0,0">
+                <Grid Grid.Row="3" Margin="0,10,0,0">
                     <TextBlock x:Name="StatusText"
                                FontSize="11"
                                Foreground="#AEB4BB"
@@ -82,7 +134,7 @@
                         </Button.Template>
                     </Button>
                 </Grid>
-            </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

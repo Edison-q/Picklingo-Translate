@@ -20,3 +20,6 @@ AGENTS.md
 
 # 发行包产物
 dist/
+
+# 发布前备份（旧版 exe/dll）
+.backup/
